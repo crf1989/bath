@@ -1,0 +1,22 @@
+1. Set the parameters: 
+   
+   All parameters are stored in parameter.h, you
+   can just change them to any value you like.
+
+2. Compile and run:
+   
+   to compile just type 'make', a program 'ele' would be generated.
+   to run program just type './ele'.
+
+Note, there are some options in parameter.h for checking purpose:
+
+   In parameter.h, if set WRITE_SPECTRAL to 1 then the spectral of
+   the noise would be written in file folder ./check.
+   If WRITE_FRIC is 1 then the self energy would be written in check.
+   If WRITE_NOISE is 1 then the noise in omega domain would be written.
+   If WRITE_ETA is 1 then the noise in time domain would be written.
+   If WRITE_CORRELATION is 1 then the correlation of noise in time domain
+   would be calcaulated and written, this may take a long time.
+   If WRITE_PSI is 1 then the wavefunction with respect to time would be
+   written in folder psi.
+   If WRITE_NORM is 1 then the normalization would be written in folder norm.
