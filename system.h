@@ -20,8 +20,14 @@ bath* right1 = NULL;
 bath* right2 = NULL;
 vector* spin = NULL;
 
+double complex left1_fric = 0;
+double complex left2_fric = 0;
+double complex right1_fric = 0;
+double complex right2_fric = 0;
+
 void init_system ();
 void rotate_electron (int i, vector s);
+void md_step ();
 /*******************************************************/
 
 void init_system ()
@@ -96,10 +102,10 @@ void init_system ()
       assert (system ("mkdir -p check/noise") != -1);
       write_noise (left1,
 		   "#This is the noise in omega domain for left up lead\n"
-		   "#omega\treal\timag\n", "check/noise/left_noise.dat");
+		   "#omega\treal\timag\n", "check/noise/left_up_noise.dat");
       write_noise (left2,
 		   "#This is the noise in omega domain for left down lead\n"
-		   "#omega\treal\timag\n", "check/noise/left_noise.dat");
+		   "#omega\treal\timag\n", "check/noise/left_down_noise.dat");
 
       write_noise (right1,
 		   "#This is the noise in omega domain for right up lead\n"
@@ -173,87 +179,90 @@ void rotate_electron (int i, vector s)
   center2->psi[i] = sigma[1][0]*tmp1 + sigma[1][1]*tmp2;
 }
 
-/* void md_step () */
-/* { */
-/*   double complex left1_fric = 0; */
-/*   double complex left2_fric = 0; */
-/*   double complex right1_fric = 0; */
-/*   double complex right2_fric = 0; */
-/*   int m = i%center1->n; */
-/*   int n = (i+1)%center1->n; */
+void md_step ()
+{
+  double dt = TIME_INTERVAL;
+  
+  left1_fric = 0;
+  left2_fric = 0;
+  right1_fric = 0;
+  right2_fric = 0;
 
-/*   for (int j = 0; j < center1->n; ++j) */
-/*     { */
-/*       left1_fric += left1->fric[left1->size-center1->n+j] * */
-/* 	center1->cl[(n+j)%center1->n]; */
-/*       left2_fric += left2->fric[left2->size-center2->n+j] * */
-/* 	center2->cl[(n+j)%center2->n]; */
+  int m = left1->pos%center1->n;
+  int n = (m+1)%center1->n;
+
+  for (int i = 0; i < center1->n; ++i)
+    {
+      left1_fric += left1->fric[left1->size-center1->n+i] *
+	center1->cl[(n+i)%center1->n];
+      left2_fric += left2->fric[left2->size-center2->n+i] *
+	center2->cl[(n+i)%center2->n];
 	  
-/*       right1_fric += right1->fric[right1->size-center1->n+j] * */
-/* 	center1->cr[(n+j)%center1->n]; */
-/*       right2_fric += right2->fric[right2->size-center2->n+j] * */
-/* 	center2->cr[(n+j)%center2->n]; */
-/*     } */
+      right1_fric += right1->fric[right1->size-center1->n+i] *
+	center1->cr[(n+i)%center1->n];
+      right2_fric += right2->fric[right2->size-center2->n+i] *
+	center2->cr[(n+i)%center2->n];
+    }
 
-/*   left1_fric *= dt; */
-/*   left2_fric *= dt; */
-/*   right1_fric *= dt; */
-/*   right2_fric *= dt; */
+  left1_fric *= dt;
+  left2_fric *= dt;
+  right1_fric *= dt;
+  right2_fric *= dt;
 
-/*   center1->psi[0] += -I*(left1->eta[i]+left1_fric)*dt; */
-/*   center2->psi[0] += -I*(left2->eta[i]+left2_fric)*dt; */
-/*   center1->psi[center1->size-1] += -I*(right1->eta[i]+right1_fric)*dt; */
-/*   center2->psi[center2->size-1] += -I*(right2->eta[i]+right2_fric)*dt; */
+  center1->psi[0] += -I*(eta(left1)+left1_fric)*dt;
+  center2->psi[0] += -I*(eta(left2)+left2_fric)*dt;
+  center1->psi[center1->size-1] += -I*(eta(right1)+right1_fric)*dt;
+  center2->psi[center2->size-1] += -I*(eta(right2)+right2_fric)*dt;
 
-/*   vector H; */
-/*   vector s; */
-/*   for (int j = 0; j < CENTER_SITE_NUMBER; ++j) */
-/*     { */
-/*       for (int k = 0; k < 3; ++k) */
-/* 	s.s[k] = 0.5*JH*(spin[j].s[k]+spin[j+1].s[k]); */
-/*       rotate_electron (j, s); */
-/*     } */
-/*   for (int j = 0; j < CENTER_SITE_NUMBER+1; ++j) */
-/*     { */
-/*       for (int k = 0; k < 3; ++k) */
-/* 	if (j == 0) */
-/* 	  H.s[k] = J1*spin[j+1].s[k]; */
-/* 	else if (j == CENTER_SITE_NUMBER) */
-/* 	  H.s[k] = J1*spin[j-1].s[k]; */
-/* 	else */
-/* 	  H.s[k] = J1*(spin[j-1].s[k]+spin[j-1].s[k]); */
+  vector H;
+  vector s;
+  for (int i = 0; i < CENTER_SITE_NUMBER; ++i)
+    {
+      for (int k = 0; k < 3; ++k)
+	s.s[k] = 0.5*JH*(spin[i].s[k]+spin[i+1].s[k]);
+      rotate_electron (i, s);
+    }
+  for (int i = 0; i < CENTER_SITE_NUMBER+1; ++i)
+    {
+      for (int k = 0; k < 3; ++k)
+	if (i == 0)
+	  H.s[k] = J1*spin[i+1].s[k];
+	else if (i == CENTER_SITE_NUMBER)
+	  H.s[k] = J1*spin[i-1].s[k];
+	else
+	  H.s[k] = J1*(spin[i-1].s[k]+spin[i-1].s[k]);
 	  
-/*       if (j == 0) */
-/* 	{ */
-/* 	  H.s[0] += JH*creal(conj(center1->psi[j])*center2->psi[j]); */
-/* 	  H.s[1] += JH*cimag(conj(center1->psi[j])*center2->psi[j]); */
-/* 	  H.s[2] += JH*0.5*(cabs2(center1->psi[j])-cabs2(center2->psi[j])); */
-/* 	} */
-/*       else if (j == CENTER_SITE_NUMBER) */
-/* 	{ */
-/* 	  H.s[0] += JH*creal(conj(center1->psi[j-1])*center2->psi[j-1]); */
-/* 	  H.s[1] += JH*cimag(conj(center1->psi[j-1])*center2->psi[j-1]); */
-/* 	  H.s[2] += JH*0.5*(cabs2(center1->psi[j-1])-cabs2(center2->psi[j-1])); */
-/* 	} */
-/*       else */
-/* 	{ */
-/* 	  H.s[0] += JH*creal(conj(center1->psi[j-1])*center2->psi[j-1])+ */
-/* 	    JH*creal(conj(center1->psi[j])*center2->psi[j]); */
-/* 	  H.s[1] += JH*cimag(conj(center1->psi[j-1])*center2->psi[j-1])+ */
-/* 	    JH*cimag(conj(center1->psi[j])*center2->psi[j]); */
-/* 	  H.s[2] += JH*0.5*(cabs2(center1->psi[j-1])-cabs2(center2->psi[j-1]))+ */
-/* 	    JH*0.5*(cabs2(center1->psi[j])-cabs2(center2->psi[j])); */
-/* 	} */
-/*       rotate_spin (&spin[j], H); */
-/*     } */
+      if (i == 0)
+	{
+	  H.s[0] += JH*creal(conj(center1->psi[i])*center2->psi[i]);
+	  H.s[1] += JH*cimag(conj(center1->psi[i])*center2->psi[i]);
+	  H.s[2] += JH*0.5*(cabs2(center1->psi[i])-cabs2(center2->psi[i]));
+	}
+      else if (i == CENTER_SITE_NUMBER)
+	{
+	  H.s[0] += JH*creal(conj(center1->psi[i-1])*center2->psi[i-1]);
+	  H.s[1] += JH*cimag(conj(center1->psi[i-1])*center2->psi[i-1]);
+	  H.s[2] += JH*0.5*(cabs2(center1->psi[i-1])-cabs2(center2->psi[i-1]));
+	}
+      else
+	{
+	  H.s[0] += JH*creal(conj(center1->psi[i-1])*center2->psi[i-1])+
+	    JH*creal(conj(center1->psi[i])*center2->psi[i]);
+	  H.s[1] += JH*cimag(conj(center1->psi[i-1])*center2->psi[i-1])+
+	    JH*cimag(conj(center1->psi[i])*center2->psi[i]);
+	  H.s[2] += JH*0.5*(cabs2(center1->psi[i-1])-cabs2(center2->psi[i-1]))+
+	    JH*0.5*(cabs2(center1->psi[i])-cabs2(center2->psi[i]));
+	}
+      rotate_spin (&spin[i], H);
+    }
 
-/*   crank_nicolson (center1); */
-/*   crank_nicolson (center2); */
+  crank_nicolson (center1);
+  crank_nicolson (center2);
 
-/*   center1->cl[n] = center1->psi[0]; */
-/*   center2->cl[n] = center2->psi[0]; */
-/*   center1->cr[n] = center1->psi[center1->size-1]; */
-/*   center2->cr[n] = center2->psi[center2->size-1]; */
-/* } */
+  center1->cl[n] = center1->psi[0];
+  center2->cl[n] = center2->psi[0];
+  center1->cr[n] = center1->psi[center1->size-1];
+  center2->cr[n] = center2->psi[center2->size-1];
+}
   
 #endif	/* SYSTEM_H */

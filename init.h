@@ -132,13 +132,31 @@ void set_output ()
     }
   if (WRITE_NORM)
     {
-      assert (system ("mkdir -p check") != -1);
-      fnorm = fopen ("check/norm.dat", "w");
+      assert (system ("mkdir -p check/norm") != -1);
+      fnorm = fopen ("check/norm/norm.dat", "w");
       assert (fnorm != NULL);
       fprintf (fnorm, 
 	       "#This is the norm of psi with respect with time\n"
 	       "#time\treal\timag\n");
-    } 
+    }
+  if (WRITE_SPIN)
+    {
+      assert (system ("rm -rf spin") != -1);
+      assert (system ("mkdir -p spin") != -1);
+      fspin = malloc ((CENTER_SITE_NUMBER+1) * sizeof(FILE*));
+      assert (fspin != NULL);
+      char filename[128];
+      for (int i = 0; i < CENTER_SITE_NUMBER+1; ++i)
+	{
+	  sprintf (filename, "spin/%d.dat", i);
+	  fspin[i] = fopen (filename, "w");
+	  assert (fspin[i] != NULL);
+	  fprintf (fspin[i],
+		   "#This is the vector of spin with respect with time\n"
+		   "#time\tx\ty\tz\tS\n");
+	}
+    }
+
   
   assert (system ("mkdir -p current") != -1);
   fnc = fopen ("current/number_current.dat", "w");
@@ -175,6 +193,12 @@ void close_all ()
   if (WRITE_NORM)
     {
       fclose (fnorm);
+    }
+  if (WRITE_SPIN)
+    {
+      for (int i = 0; i < CENTER_SITE_NUMBER+1; ++i)
+	fclose (fspin[i]);
+      free (fspin);
     }
   free_bath (left1);
   free_bath (left2);
