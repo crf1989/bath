@@ -179,7 +179,7 @@ void rotate_electron (int i, vector s)
   center2->psi[i] = sigma[1][0]*tmp1 + sigma[1][1]*tmp2;
 }
 
-void md_step ()
+void md_step (int a)
 {
   double dt = TIME_INTERVAL;
   
@@ -188,7 +188,7 @@ void md_step ()
   right1_fric = 0;
   right2_fric = 0;
 
-  int m = left1->pos%center1->n;
+  int m = a%center1->n;
   int n = (m+1)%center1->n;
 
   for (int i = 0; i < center1->n; ++i)

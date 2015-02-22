@@ -4,7 +4,7 @@
 const int CENTER_SITE_NUMBER = 128;
 const int NOISE_NUMBER_POW = 21;
 const int SELF_ENERGY_NUMBER_POW = 10;
-const int TIME_STEP_NUMBER_POW = 21;
+const int TIME_STEP_NUMBER_POW = 24;
 int NOISE_NUMBER;
 int SELF_ENERGY_NUMBER;
 int TIME_STEP_NUMBER;
@@ -32,7 +32,7 @@ const int stride = 100;
 #define WRITE_CORRELATION 0
 
 #define WRITE_PSI 0
-#define WRITE_NORM 1
-#define WRITE_SPIN 1
+#define WRITE_NORM 0
+#define WRITE_SPIN 0
 
 #endif /* PARAMETER_H */
