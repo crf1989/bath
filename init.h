@@ -40,8 +40,9 @@ void init ()
 
   tee (flog,
        "S\t\t\t\t\t=\t%.8g\n"
-       "J1\t\t\t\t\t=\t%.8g\n"
-       "JH\t\t\t\t\t=\t%.8g\n"
+       "J1\t\t\t\t\t=\t%.8g eV\n"
+       "JH\t\t\t\t\t=\t%.8g eV\n"
+       "B\t\t\t\t\t=\t%.8g T\n"
        "CENTER_SITE_NUMBER\t\t\t=\t%d\n"
        "NOISE_NUMBER\t\t\t\t=\t2^%d\t=\t%d\n"
        "SELF_ENERGY_NUMBER\t\t\t=\t2^%d\t=\t%d\n"
@@ -54,7 +55,7 @@ void init ()
        "RIGHT_LEAD_TEMPERATURE\t\t\t=\t%.8g K\n"
        "RIGHT_UP_LEAD_CHEMICAL_POTENIAL\t\t=\t%.8g eV\n"
        "RIGHT_DOWN_LEAD_CHEMICAL_POTENIAL\t=\t%.8g eV\n\n",
-       S, J1, JH,
+       S, J1, JH, B,
        CENTER_SITE_NUMBER, 
        NOISE_NUMBER_POW, NOISE_NUMBER,
        SELF_ENERGY_NUMBER_POW, SELF_ENERGY_NUMBER,
@@ -105,10 +106,10 @@ void init ()
 
   time2 = time(0);
   tee (flog, "Initializing system ...\t\t\t");
+  fflush (stdout);
   init_system ();
   tee (flog, "complete, %.8gs is used\n", difftime(time(0), time2));
   fflush (stdout);
-
 }
 
 void set_output ()

@@ -154,10 +154,10 @@ void rotate_electron (int i, vector s)
   double complex sigma[2][2];
   
   double phi = sqrt (square(s.s[0]) + square(s.s[1]) + square(s.s[2]));
-  
+
   /* if |s| is zero, do nothing. */
   if (fabs (phi) < 1e-8)
-    return;
+      return;
   
   /* \vec{s}.\vec{simga}/|s|, here simga is Pauli matrice. */
   for (int k = 0; k < 3; ++k)
@@ -220,6 +220,7 @@ void md_step (int a)
     {
       for (int k = 0; k < 3; ++k)
 	s.s[k] = 0.5*JH*(spin[i].s[k]+spin[i+1].s[k]);
+      s.s[2] += g*u*B/2;
       rotate_electron (i, s);
     }
   for (int i = 0; i < CENTER_SITE_NUMBER+1; ++i)
@@ -253,6 +254,7 @@ void md_step (int a)
 	  H.s[2] += JH*0.5*(cabs2(center1->psi[i-1])-cabs2(center2->psi[i-1]))+
 	    JH*0.5*(cabs2(center1->psi[i])-cabs2(center2->psi[i]));
 	}
+      H.s[2] += g*u*B;
       rotate_spin (&spin[i], H);
     }
 
