@@ -1,22 +1,81 @@
-1. Set the parameters: 
-   
-   All parameters are stored in parameter.h, you
-   can just change them to any value you like.
+Description: 
+        This program implement a ``quantum electron bath'' with a
+        1D spin chain. The electron hopping part is tight binding 
+        model and spin part is Heisenberg model, the interaction 
+        between electron and spin is exchange effect.
 
-2. Compile and run:
-   
-   to compile just type 'make', a program 'ele' would be generated.
-   to run program just type './ele'.
+Parameters:
+        All parameters are stored in ``paremeter.h'', you can change them
+        to the values needed. Some paramters are explained below.
 
-Note, there are some options in parameter.h for checking purpose:
+        const int stride:
+                This stride is an integer, it controls the frequency
+                of output. For example, if stride=100 then the program
+                would print out data every 100 steps.
 
-   In parameter.h, if set WRITE_SPECTRAL to 1 then the spectral of
-   the noise would be written in file folder ./check.
-   If WRITE_FRIC is 1 then the self energy would be written in check.
-   If WRITE_NOISE is 1 then the noise in omega domain would be written.
-   If WRITE_ETA is 1 then the noise in time domain would be written.
-   If WRITE_CORRELATION is 1 then the correlation of noise in time domain
-   would be calcaulated and written, this may take a long time.
-   If WRITE_PSI is 1 then the wavefunction with respect to time would be
-   written in folder psi.
-   If WRITE_NORM is 1 then the normalization would be written in folder norm.
+        WRITE_SPECTRAL:	
+                If this flag is nonzero, then the spectral of bath
+                would be written into folder ``check/spectral'' 
+                during initialization.
+
+        WRITE_FRIC:
+                If this flag is nonzero, then the self energy of bath
+                would be written into folder ``check/fric'' during
+                initialization.
+
+        WRITE_NOISE:
+                If this flag is nonzero, then the noise in omega domain
+                would be written into folder ``check/noise'' during
+                initialization.
+
+        WRITE_ETA:
+                If this flag is nonzero, then the noise in time domain
+                would be written into folder ``check/eta'' during
+                initialization.
+
+        WRITE_CORRELATION:
+                If this flag is nonzero, then the actual correlation of 
+                noise in time domain (namely eta) would be calculated 
+                and written in folder ``check/correlation'' during
+                initialization.
+
+                Note that this would cost a lot of time.
+
+        WRITE_PSI:
+                If this flag is nonzero, then the wave function with respect
+                to time of electron on all sites would be written in folder
+                ``psi'' during simulation.
+
+        WRITE_NORM:
+                If this flag is nonzero, then the module of psi with respect
+                to time would be written in folder ``check/norm'' during
+                simulation.
+
+        WRITE_SPIN:
+                If this flag is nonzero, then the spin vector with respect to
+                time of each sites would be written in folder ``spin'' during
+                simulation.
+	
+Compile and Run:
+	Just type ``make'' to compile it and a program named ``ele'' would
+	be generated. Type ``./ele'' to run it. The output would also be
+        stored in file ``log''.
+
+
+Structure of Code:
+
+        parameter.h     auxiliary.h
+            |               |
+            -----------------
+                    |
+            -----------------
+            |               |
+        bath.h          spin.h          chain.h
+            |               |              |
+            --------------------------------
+                            |
+                        system.h
+                            |
+                        init.h
+                            |
+                        mai.c

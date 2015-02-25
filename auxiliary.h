@@ -9,6 +9,8 @@
 
 const double PI = 3.141592653589793;
 const double BOLTZMANN_CONSTANT = 8.6173324e-5;
+const double u = 5.7883818066e-5; /* bohr magneton, eV/T */
+const double g = 2;		  /* lande factor */
 
 int pow2();
 double square (double);
