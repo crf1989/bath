@@ -13,7 +13,7 @@ int main ()
   time2 = time(0);
   for (int i = 0; i < NOISE_NUMBER; ++i)
     {
-      md_step (i);
+      md_step ();
       next (left1); next (left2);
       next (right1); next (right2);
     }
@@ -37,10 +37,10 @@ int main ()
 
   for (int i = 0; i < TIME_STEP_NUMBER-1; ++i)
     {
-      int m = i%center1->n;
+      int m = left1->pos%center1->n;
       int n = (m+1)%center1->n;
       
-      md_step (i);
+      md_step ();
 
       if (i%stride != 0)
 	{

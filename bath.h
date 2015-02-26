@@ -103,8 +103,7 @@ void generate_fric (bath* p)
   fftw_execute (plan);
   double n = sqrt (p->size);
   for (int i = 0; i < p->size; ++i)
-    p->fric[i] /= n;
-  
+      p->fric[i] /= n;
   fftw_destroy_plan (plan);
 }
 

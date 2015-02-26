@@ -2,9 +2,9 @@
 #define PARAMETER_H 1
 
 const int CENTER_SITE_NUMBER = 10;
-const int NOISE_NUMBER_POW = 22;
-const int SELF_ENERGY_NUMBER_POW = 16;
-const int TIME_STEP_NUMBER_POW = 23;
+const int NOISE_NUMBER_POW = 20;
+const int SELF_ENERGY_NUMBER_POW = 10;
+const int TIME_STEP_NUMBER_POW = 22;
 int NOISE_NUMBER;
 int SELF_ENERGY_NUMBER;
 int TIME_STEP_NUMBER;
@@ -16,13 +16,13 @@ const double J1 = 0;  	/* eV */
 const double JH = 0;		/* eV */
 const double B = 0;		/* magnetic field, T */
 
-const double LEFT_LEAD_TEMPERATURE = 100; /* Kelvin */
+const double LEFT_LEAD_TEMPERATURE = 50; /* Kelvin */
 const double LEFT_UP_LEAD_CHEMICAL_POTENTIAL = -1.9; /* eV */
 const double LEFT_DOWN_LEAD_CHEMICAL_POTENTIAL = -1.9; /* eV */
 
-const double RIGHT_LEAD_TEMPERATURE = 5; /* kelvin */
-const double RIGHT_UP_LEAD_CHEMICAL_POTENTIAL = -1.9; /* eV */
-const double RIGHT_DOWN_LEAED_CHEMICAL_POTENTIAL = -1.9; /* eV */
+const double RIGHT_LEAD_TEMPERATURE = 50; /* kelvin */
+const double RIGHT_UP_LEAD_CHEMICAL_POTENTIAL = -2; /* eV */
+const double RIGHT_DOWN_LEAED_CHEMICAL_POTENTIAL = -2; /* eV */
 
 const int stride = 100;
 
