@@ -46,7 +46,7 @@ void rotate_spin (vector* p, vector H)
   double R[3][3];
   /* angular velocity */
   double omega = sqrt (square(H.s[0]) + square(H.s[1]) + square(H.s[2]));
-  if (fabs (omega <1e-8))
+  if (fabs (omega) < 1e-8)
     return;
   /* unit rotation axis */
   H.s[0] /= omega; H.s[1] /= omega; H.s[2] /= omega;

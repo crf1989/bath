@@ -92,7 +92,7 @@ void init_system ()
 
       write_fric (right1,
 		  "#This is the self energy for right up lead\n"
-		  "#time\treal\timag\n", "check/fric/right_fric.dat");
+		  "#time\treal\timag\n", "check/fric/right_up_fric.dat");
       write_fric (right2,
 		  "#This is the self energy for right down lead\n"
 		  "#time\treal\timag\n", "check/fric/right_down_fric.dat");
@@ -193,15 +193,11 @@ void md_step ()
 
   for (int i = 0; i < center1->n; ++i)
     {
-      left1_fric += left1->fric[left1->size-center1->n+i] *
-	center1->cl[(n+i)%center1->n];
-      left2_fric += left2->fric[left2->size-center2->n+i] *
-	center2->cl[(n+i)%center2->n];
+      left1_fric += left1->fric[center1->n-1-i] * center1->cl[(n+i)%center1->n];
+      left2_fric += left2->fric[center2->n-1-i] * center2->cl[(n+i)%center2->n];
 	  
-      right1_fric += right1->fric[right1->size-center1->n+i] *
-	center1->cr[(n+i)%center1->n];
-      right2_fric += right2->fric[right2->size-center2->n+i] *
-	center2->cr[(n+i)%center2->n];
+      right1_fric += right1->fric[center1->n-1-i] * center1->cr[(n+i)%center1->n];
+      right2_fric += right2->fric[center2->n-1-i] * center2->cr[(n+i)%center2->n];
     }
 
   left1_fric *= dt;

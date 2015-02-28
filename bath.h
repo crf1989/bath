@@ -98,12 +98,12 @@ void generate_fric (bath* p)
   fftw_plan plan = fftw_plan_dft_1d (p->size,
 				     p->fric,
 				     p->fric,
-				     FFTW_BACKWARD,
+				     FFTW_FORWARD,
+				     /* FFTW_BACKWARD, */
 				     FFTW_ESTIMATE);
   fftw_execute (plan);
-  double n = sqrt (p->size);
   for (int i = 0; i < p->size; ++i)
-      p->fric[i] /= n;
+      p->fric[i] /= p->size*p->dt;
   fftw_destroy_plan (plan);
 }
 
@@ -119,12 +119,12 @@ void generate_eta (bath* p)
   fftw_plan fft = fftw_plan_dft_1d (p->size,
   				    p->noise,
   				    p->eta,
-  				    FFTW_BACKWARD,
+				    FFTW_FORWARD,
+  				    /* FFTW_BACKWARD, */
   				    FFTW_ESTIMATE);
   fftw_execute (fft);
-  double n = sqrt (p->size);
   for (int i = 0; i < p->size; ++i)
-    p->eta[i] /= n;
+    p->eta[i] /= p->size*p->dt;
 
   fftw_destroy_plan (fft);
 }
